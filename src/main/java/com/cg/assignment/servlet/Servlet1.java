@@ -5,50 +5,32 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/page1")
 public class Servlet1 extends HttpServlet {
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
+        response.getWriter().println("<html><body>");
+        response.getWriter().println("<form action='/page1' method='post'>");
+        response.getWriter().println("First Name: <input type='text' name='firstName'><br><br>");
+        response.getWriter().println("Last Name: <input type='text' name='lastName'><br><br>");
+        response.getWriter().println("<input type='submit' value='Submit'>");
+        response.getWriter().println("</form>");
+        response.getWriter().println("</body></html>");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
 
-        out.println("<html>");
-        out.println("<body>");
-        out.println("<p>First Name: " + firstName + "</p>");
-        out.println("<p>Last Name: " + lastName + "</p>");
+        HttpSession session = request.getSession();
+        session.setAttribute("firstName", firstName);
+        session.setAttribute("lastName", lastName);
 
-        out.println("<form action='page2' method='post'>");
-        out.println("Email: <input type='text' name='email'/><br/><br/>");
-        out.println("Phone: <input type='text' name='phone'/><br/><br/>");
-
-        out.println("<input type='hidden' name='firstName' value='" + firstName + "'/");
-        out.println("<input type='hidden' name='lastName' value='" + lastName + "'/");
-
-        out.println("<button><input type='submit' value='Submit'/>Submit</button>");
-        out.println("</form");
-        out.println("</body>");
-        out.println("</html>");
-        out.close();
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        out.println("<form action='page2' method='post'>");
-        out.println("First Name: <input type='text' name='firstName' /><br /><br />");
-        out.println("Last Name: <input type='text' name='lastName' /><br /><br />");
-        out.println("<button><input type='submit' value='Submit/>Submit</button>");
-        out.println("</form>");
-        out.println("</body>");
-        out.println("</html>");
-        out.close();
+        response.sendRedirect("/page2");
     }
 }

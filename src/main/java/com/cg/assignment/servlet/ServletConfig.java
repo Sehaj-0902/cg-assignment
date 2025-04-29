@@ -20,4 +20,9 @@ public class ServletConfig {
     public ServletRegistrationBean<Servlet3> page3ServletServletRegistrationBean() {
         return new ServletRegistrationBean<>(new Servlet3(), "/page3");
     }
+
+    @Bean
+    public ServletRegistrationBean<Servlet4> page4ServletServletRegistrationBean() {
+        return new ServletRegistrationBean<>(new Servlet4(), "/page4");
+    }
 }

@@ -5,66 +5,38 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/page2")
 public class Servlet2 extends HttpServlet {
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        String firstName = (String) session.getAttribute("firstName");
+        String lastName = (String) session.getAttribute("lastName");
+
         response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
+        response.getWriter().println("<html><body>");
+        response.getWriter().println("First Name: " + firstName + "<br><br>");
+        response.getWriter().println("Last Name: " + lastName + "<br><br>");
+        response.getWriter().println("<form action='/page2' method='post'>");
+        response.getWriter().println("Email: <input type='email' name='email'><br><br>");
+        response.getWriter().println("Phone Number: <input type='text' name='phone'><br><br>");
+        response.getWriter().println("<input type='submit' value='Submit'>");
+        response.getWriter().println("</form>");
+        response.getWriter().println("</body></html>");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
 
-        out.println("<html>");
-        out.println("<body>");
-        out.println("<p>First Name: " + firstName + "</p>");
-        out.println("<p>Last Name: " + lastName + "</p>");
+        HttpSession session = request.getSession();
+        session.setAttribute("email", email);
+        session.setAttribute("phone", phone);
 
-        out.println("<p>Email: " + email + "</p>");
-        out.println("<p>Phone: " + phone + "</p>");
-
-        out.println("<form action='page3' method='post'>");
-        out.println("City: <input type='text' name='city'/><br/><br/>");
-        out.println("Country: <input type='text' name='country'/><br/><br/>");
-
-        out.println("<input type='hidden' name='firstName' value='" + firstName + "'/");
-        out.println("<input type='hidden' name='lastName' value='" + lastName + "'/");
-
-        out.println("<input type='hidden' name='email' value='" + email + "'/");
-        out.println("<input type='hidden' name='phone' value='" + phone + "'/");
-
-        out.println("<button><input type='submit' value='Submit'/></button>");
-        out.println("</form");
-        out.println("</body>");
-        out.println("</html>");
-        out.close();
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-
-        out.println("<html>");
-        out.println("<body>");
-        out.println("<p>First Name: " + (firstName != null ? firstName : "") + "</p>");
-        out.println("<p>Last Name: " + (lastName != null ? lastName: "") + "</p>");
-        out.println("<form action='page2' method='post'>");
-        out.println("Email: <input type='text' name='email' /><br /><br />");
-        out.println("Phone: <input type='text' name='phone' /><br /><br />");
-        out.println("<input type='hidden' name='firstName' value='" + (firstName != null ? firstName : "") + "' />");
-        out.println("<input type='hidden' name='lastName' value='" + (lastName != null ? lastName : "") + "' />");
-        out.println("<button><input type='submit' value='Submit/></button>");
-        out.println("</form>");
-        out.println("</body>");
-        out.println("</html>");
-        out.close();
+        response.sendRedirect("/page3");
     }
 }
